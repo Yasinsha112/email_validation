@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Validation</title>
+</head>
+<body>
+  <form id="emailForm">
+    <input type="email" id="email" placeholder="Enter email" required />
+    <button type="submit">Submit</button>
+    <p id="status"></p>
+  </form>
+
+  <script>
+  document.getElementById("emailForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const status = document.getElementById("status");
+
+    status.textContent = "Checking...";
+
+    try {
+      const response = await fetch("http://localhost:3000/validate-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+
+      const result = await response.json();
+
+      if (result.status === "valid") {
+        status.textContent = "✅ Email is valid. You may proceed.";
+      } else {
+        status.textContent = "❌ Invalid email: " + result.reason;
+      }
+    } catch (err) {
+      status.textContent = "❌ Error occurred: " + err.message;
+    }
+  });
+</script>
+
+</body>
+</html>
