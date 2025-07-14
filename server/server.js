@@ -1,14 +1,13 @@
 const express = require("express");
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const Clearout = require('@clearoutio/clearout');
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
-dotenv.config()
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT;
-
-const API_TOKEN = process.env.API_TOKEN;
+const PORT = process.env.PORT || 3000;
+const clearout = new Clearout(process.env.API_TOKEN, { timeout: 5000 });
 
 app.use(cors());
 app.use(express.static(__dirname));
@@ -18,27 +17,19 @@ app.post("/validate-email", async (req, res) => {
   const { email } = req.body;
 
   try {
-    const apiRes = await fetch("https://api.clearout.io/v2/email_verify/instant", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${API_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
+    const result = await clearout.emailVerifier.verify({ email });
 
-    const data = await apiRes.json();
-
-    if (data.data.status === "valid") {
+    if (result.status === "valid") {
       res.json({ status: "valid" });
     } else {
-      res.json({ status: "invalid", reason: data.data.sub_status?.desc || data.data.status });
+      res.json({ status: "invalid", reason: result.sub_status || result.status });
     }
+
   } catch (error) {
     res.status(500).json({ status: "error", reason: error.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(` Server running at http://localhost:${PORT}`);
 });
