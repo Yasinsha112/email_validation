@@ -1,50 +1,103 @@
-# Email Validation API
+# 📧 Email Validation API (Clearout SDK Version)
 
-Backend service that validates email addresses using Clearout.io API.
+This backend service validates email addresses in real time using the official [`@clearoutio/clearout`](https://www.npmjs.com/package/@clearoutio/clearout) Node.js SDK.
 
-## Setup
+---
 
-1. Install dependencies:
-```bash
-npm install express node-fetch body-parser cors dotenv
-```
+## 🚀 Features
 
-2. Create `.env` file:
-```
+- ✅ Real-time email verification via Clearout SDK
+- 🛡️ Handles invalid, disposable, gibberish, and role-based emails
+- 🌐 CORS enabled for frontend communication
+- 📂 Serves static frontend files (form.html / form.js)
+- ⚠️ Centralized error handling
+- 🔒 Uses `.env` for secure API token management
+
+---
+
+## 📦 Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Yasinsha112/email_validation.git
+   cd email_validation
+Install dependencies:
+
+bash
+Copy
+Edit
+npm install
+Create a .env file in the root directory:
+
+env
+Copy
+Edit
 PORT=3000
 API_TOKEN=your_clearout_api_token
-```
+▶️ Run the Project
+Start the backend server:
 
-3. Start server:
-```bash
+bash
+Copy
+Edit
 node server.js
-```
+The server will run at:
+🔗 http://localhost:3000
 
-## API Endpoint
+🔗 API Endpoint
+POST /validate-email
+Request Body:
 
-**POST** `/validate-email`
-
-**Request:**
-```json
-{ "email": "user@example.com" }
-```
-
-**Response:**
-```json
+json
+Copy
+Edit
 {
-  "status": "valid" | "invalid" | "error",
-  "reason": "Error description (if invalid/error)"
+  "email": "user@example.com"
 }
-```
+Successful Response:
 
-## Environment Variables
+json
+Copy
+Edit
+{
+  "status": "valid"
+}
+Invalid Response:
 
-- `PORT` - Server port (default: 3000)
-- `API_TOKEN` - Clearout.io API token
+json
+Copy
+Edit
+{
+  "status": "invalid",
+  "reason": "disposable" // or gibberish, role, etc.
+}
+Error Response:
 
-## Features
+json
+Copy
+Edit
+{
+  "status": "error",
+  "reason": "API token missing or request failed"
+}
+🌐 Frontend
+Simple HTML + JS form in form.js and index.html that:
 
-- Email validation via Clearout.io
-- CORS enabled
-- Static file serving
-- Error handling
+Collects user email
+
+Sends to /validate-email
+
+Displays response using DOM updates
+
+🛠️ Tech Stack
+Node.js
+
+Express
+
+@clearoutio/clearout (Official SDK)
+
+dotenv
+
+body-parser
+
+cors
