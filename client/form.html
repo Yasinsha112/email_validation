@@ -3,42 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <title>Email Validation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f0f4f7, #d9e2ec);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: 500;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
+
   <form id="emailForm">
-    <input type="email" id="email" placeholder="Enter email" required />
+    <h2>Email Validation</h2>
+    <input type="email" id="email" placeholder="Enter your email" required />
     <button type="submit">Submit</button>
     <p id="status"></p>
   </form>
 
   <script>
-  document.getElementById("emailForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const status = document.getElementById("status");
+    document.getElementById("emailForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const status = document.getElementById("status");
 
-    status.textContent = "Checking...";
+      status.textContent = "Checking...";
 
-    try {
-      const response = await fetch("http://localhost:3000/validate-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
+      try {
+        const response = await fetch("http://localhost:3000/validate-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
 
+        const result = await response.json();
 
-      const result = await response.json();
-
-      if (result.status === "valid") {
-        status.textContent = "✅ Email is valid. You may proceed.";
-      } else {
-        status.textContent = "❌ Invalid email: " + result.reason;
+        if (result.status === "valid") {
+          status.textContent = "✅ Email is valid. You may proceed.";
+          status.style.color = "green";
+        } else {
+          status.textContent = "❌ Invalid email: " + result.reason;
+          status.style.color = "red";
+        }
+      } catch (err) {
+        status.textContent = "❌ Error occurred: " + err.message;
+        status.style.color = "red";
       }
-    } catch (err) {
-      status.textContent = "❌ Error occurred: " + err.message;
-    }
-  });
-</script>
+    });
+  </script>
 
 </body>
 </html>
